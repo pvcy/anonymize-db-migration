@@ -1,6 +1,6 @@
-# Anonymizing Data in Ephemeral Environments
+# Stateful Validation of Database Migrations
 
-This is a demo application for ephemeral development environments, such as testing, staging, and sandbox setups. It can be used for reference or as a starting point to build vendor specific architectures that work with Privacy Dynamics. The application is designed to be as simple and basic as possible.
+This application is a demonstration of how to validate database migrations will succeed before being run in production environments. The application uses real, anonymized production data to verify migrations work and don't fail against outlier data.
 
 ## A reference architecture
 The reference architecture we propose is designed specifically for ephemeral development environments. These environments often contain subsets of production data, making it essential to safeguard Personally Identifiable Information (PII) and other sensitive details.
@@ -27,5 +27,5 @@ Once connectivity to the databases is established, a base environment can be use
 ## Getting started
 You can run a single instance of the application locally. All you need to get started is [Docker](https://www.docker.com/) installed on your local machine.
 
-1. Start the application with `docker compose -up --build`. This will seed the PostgreSQL database with data from the JSON file.
+1. Start the application with `docker compose up --build`. This will seed the PostgreSQL database with data from the JSON file.
 2. Navigate to `http://localhost:5000` in your browser.
