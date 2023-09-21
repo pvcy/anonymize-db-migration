@@ -1,0 +1,45 @@
+name: Create Preview and Test Migration
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login
+        uses: okteto/context@2.19.2
+        with:
+          token: ${{ secrets.OKTETO_GCP_TOKEN }}
+          url: ${{secrets.OKTETO_GCP_URL}}
+
+      - name: Deploy preview environment
+        uses: okteto/deploy-preview@2.19.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: pr-${{ github.event.number }}
+          scope: global
+          timeout: 15m
+          variables: "DOPPLER_CONFIG=dev,DOPPLER_TOKEN=${{ secrets.DOPPLER_TOKEN }}"
+
+  load-data:
+    name: Load data from snapshot
+    runs-on: ubuntu-latest
+    steps:
+      - id: load-data-from-snapshot
+        run: |
+          some bash command goes here
+
+  tests:
+    name: Run integration tests
+    runs-on: ubuntu-latest
+    needs: preview
+    steps:
+      - id: run-alembic-tests
+        name: Run Alembic migration tests
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+          DOPPLER_PROJECT: my-big-proj
+          DOPPLER_CONFIG: dev
+        run: doppler run -- pytest test/alembic
