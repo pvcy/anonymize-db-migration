@@ -34,14 +34,14 @@ jobs:
           some bash command goes here
 
   tests:
-    name: Run integration tests
+    name: Verify migration works
     runs-on: ubuntu-latest
     needs: preview
     steps:
-      - id: run-alembic-tests
-        name: Run Alembic migration tests
+      - id: run-migration
+        name: Run Sequelize migration
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
           DOPPLER_PROJECT: my-big-proj
           DOPPLER_CONFIG: dev
-        run: doppler run -- pytest test/alembic
+        run: doppler run -- npx sequelize-cli db:migrate
