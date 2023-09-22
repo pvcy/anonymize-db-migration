@@ -13,7 +13,7 @@ jobs:
         uses: okteto/context@2.19.2
         with:
           token: ${{ secrets.OKTETO_GCP_TOKEN }}
-          url: ${{secrets.OKTETO_GCP_URL}}
+          url: ${{ secrets.OKTETO_GCP_URL }}
 
       - name: Deploy preview environment
         uses: okteto/deploy-preview@2.19.2
@@ -23,7 +23,6 @@ jobs:
           name: pr-${{ github.event.number }}
           scope: global
           timeout: 15m
-          variables: "DOPPLER_CONFIG=dev,DOPPLER_TOKEN=${{ secrets.DOPPLER_TOKEN }}"
 
   load-data:
     name: Load data from snapshot
@@ -31,7 +30,7 @@ jobs:
     steps:
       - id: load-data-from-snapshot
         run: |
-          some bash command goes here
+          echo "some bash command goes here"
 
   tests:
     name: Verify migration works
@@ -40,8 +39,4 @@ jobs:
     steps:
       - id: run-migration
         name: Run Sequelize migration
-        env:
-          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
-          DOPPLER_PROJECT: my-big-proj
-          DOPPLER_CONFIG: dev
         run: doppler run -- npx sequelize-cli db:migrate
