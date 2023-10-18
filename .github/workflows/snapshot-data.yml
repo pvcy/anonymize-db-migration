@@ -1,7 +1,10 @@
 name: Anonymize production data to staging database
 on:
-  schedule: 
-    - cron: '0 0 * * *'
+  pull_request:
+    branches: [ main ]
+# on:
+#   schedule: 
+#     - cron: '0 0 * * *'
 
 jobs:
   deploy:
@@ -26,25 +29,7 @@ jobs:
         docker tag destination-db:latest gcr.io/database-migration-anonymized/destination-db
         docker push gcr.io/database-migration-anonymized/destination-db
 
-    - name: Deploy to CloudRun
+    - name: Deploy to CloudRun # Cloud Run service must already exist
       run: |
-        gcloud run deploy my-pg-service --image=gcr.io/database-migration-anonymized/destination-db --platform managed --allow-unauthenticated
-  # anonymize:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Anonymize Data
-  #       uses: pvcy/anonymize-project@latest
-  #       with:
-  #         project-id: 4e1213f4-my-project-uuid-0242ac120002
-  #         db-host: my_postgres_host.host.com
-  #         db-port: 5432
-  #         db-username: postgres_username
-  #         db-password: postgres_password
-  #         client-id: ClientIDFromYourPDAccount
-  #         client-secret: ClientSecretFromYourPDAccount
-  # dump-database:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Dump database to blob storage
-  #     run: |
-  #       some bash command to call pgdump
+        gcloud run deploy destination-database --image=gcr.io/database-migration-anonymized/destination-db --platform managed --allow-unauthenticated --region us-west1
+
