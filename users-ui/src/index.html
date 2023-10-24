@@ -63,6 +63,7 @@
         <th>Zip Code</th>
         <th>Age</th>
         <th>Gender</th>
+        <th>DOB</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -115,6 +116,10 @@
           const genderCell = document.createElement('td');
           genderCell.textContent = user.gender;
           row.appendChild(genderCell);
+
+          const dobCell = document.createElement('td');
+          dobCell.textContent = user.dob;
+          row.appendChild(dobCell);
 
           tableBody.appendChild(row);
         });

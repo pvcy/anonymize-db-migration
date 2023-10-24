@@ -35,7 +35,8 @@ const connectToDatabase = async () => {
             state varchar(30),
             zip varchar(12),
             age int,
-            gender varchar(10)
+            gender varchar(10),
+            dob varchar(255)
         );
     `);
 
