@@ -11,6 +11,10 @@ jobs:
     env:
       GCP_PROEJCT_ID: "database-migration-anonymized"
       DB_HOST: "users-db"
+      POSTGRES_PASSWORD: "dMVZFeBWLOzYRV71"
+      DB_USERNAME: "postgres"
+      POSTGRES_DB: "postgres"
+      DB_BACKUP_URL: "https://storage.googleapis.com/anonymize-db-backups/us-west1/backup.sql"
 
     steps:
     - name: Checkout code
@@ -36,16 +40,20 @@ jobs:
         docker pull gcr.io/$GCP_PROEJCT_ID/$DB_HOST:latest
 
     - name: Start PostgreSQL container
-      env:
-        POSTGRES_PASSWORD: ${DB_PASSWORD:-dMVZFeBWLOzYRV71}
-        POSTGRES_DB: "postgres"
       run: |
-        docker run -d --name $DB_HOST -e POSTGRES_PASSWORD=$DB_PASSWORD: -e POSTGRES_DB=$POSTGRES_DB -p 5432:5432 gcr.io/$GCP_PROEJCT_ID/$DB_HOST:latest
+        docker run -d --name $DB_HOST \
+          -e POSTGRES_USER=$DB_USERNAME \
+          -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+          -e POSTGRES_DB=$POSTGRES_DB \
+          -e RESTORE_FROM_BACKUP=True \
+          -e DB_BACKUP_URL=$DB_BACKUP_URL \
+          -p 5432:5432 \
+          gcr.io/$GCP_PROEJCT_ID/$DB_HOST:latest
 
     - name: Install Sequelize CLI and dependencies
       run: |
-        npm install sequelize-cli
-        npm install # Assuming you have package.json with necessary dependencies
+        cd ./users-api/src
+        npm install
 
     - name: Wait for Postgres to be ready
       run: |
@@ -55,9 +63,10 @@ jobs:
           sleep 10
         done
 
-    # - name: Run Sequelize migrations
-    #   run: |
-    #     npx sequelize-cli db:migrate --config path-to-your-sequelize-config
+    - name: Run Sequelize migrations
+      run: |
+        cd ./users-api/src
+        npx sequelize-cli db:migrate 
 
     - name: Cleanup
       run: docker stop $DB_HOST
