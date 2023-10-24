@@ -8,8 +8,8 @@ const connectToDatabase = async () => {
     retries++;
     console.log(`Attempt ${retries} to connect to database`);
     client = new Client({
-      host: "db",
-      database: "postgres",
+      host: process.env.DB_HOST,
+      database: process.env.POSTGRES_DB,
       user: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
     });

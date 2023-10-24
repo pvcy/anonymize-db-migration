@@ -7,11 +7,11 @@ const HOST = "0.0.0.0";
 const { Sequelize, DataTypes } = require("sequelize");
 
 const sequelize = new Sequelize(
-  "postgres",
+  process.env.POSTGRES_DB,
   process.env.DB_USERNAME,
   process.env.DB_PASSWORD,
   {
-    host: "db",
+    host: process.env.DB_HOST,
     dialect: "postgres",
   }
 );

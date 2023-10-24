@@ -1,7 +1,7 @@
-name: Anonymize database and export it
+name: Anonymize database
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ develop ]
 jobs:
   anonymize:
     runs-on: ubuntu-latest
@@ -16,9 +16,3 @@ jobs:
           db-password: ${{ secrets.PG_PASSWORD }}
           client-id: ${{ secrets.DB_SSH_KEY }}
           client-secret: ${{ secrets.DB_SSH_SECRET }}
-  dump-database:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Dump database to blob storage
-      run: |
-        some bash command to call pgdump

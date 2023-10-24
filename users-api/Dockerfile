@@ -10,4 +10,3 @@ ADD ./users-api/data/users.json ./users.json
 EXPOSE 8080
 
 CMD ["./docker-entrypoint.sh"]
-# CMD [ "node", "server.js" ]
