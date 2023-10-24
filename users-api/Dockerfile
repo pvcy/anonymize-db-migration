@@ -4,8 +4,8 @@ WORKDIR /app
 COPY ./users-api/src/package*.json ./
 RUN npm install
 
-ADD ./users-api/src .
-ADD ./users-api/data/users.json ./users.json
+COPY ./users-api/src .
+COPY ./users-api/data/ .
 
 EXPOSE 8080
 
