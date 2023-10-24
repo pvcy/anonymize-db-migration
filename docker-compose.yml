@@ -9,7 +9,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-dMVZFeBWLOzYRV71} #It is strongly recommended to provide DB_PASSWORD in the environment rather than use this default.
       POSTGRES_DB: "postgres"
       DB_HOST: "users-db"
-      LOAD_DATA: "False"
+      LOAD_DATA: "True"
     ports:
       - 8080:8080
     depends_on:
@@ -33,6 +33,6 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-dMVZFeBWLOzYRV71}
       POSTGRES_DB: "postgres"
       DB_BACKUP_URL: "https://storage.googleapis.com/anonymize-db-backups/us-west1/backup.sql"
-      RESTORE_FROM_BACKUP: "True"
+      RESTORE_FROM_BACKUP: "False"
     ports:
       - 5432:5432
