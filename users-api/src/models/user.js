@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -23,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     zip: DataTypes.STRING,
     age: DataTypes.INTEGER,
     gender: DataTypes.STRING,
+    dob: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'User',
