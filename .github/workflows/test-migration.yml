@@ -14,15 +14,23 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Authenticate with GCP
-      uses: google-github-actions/setup-gcloud@v0.3.0
+      uses: google-github-actions/auth@v1
       with:
-        project_id: $GCP_PROEJCT_ID
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        export_default_credentials: true
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Use gcloud CLI
+      run: gcloud info
+
+    - name: Configure Docker to authenticate with GCR
+      run: |
+        gcloud auth configure-docker
+    
     - name: Pull PostgreSQL image from GCP
       run: |
         docker pull gcr.io/$GCP_PROEJCT_ID/$DB_HOST:latest
