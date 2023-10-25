@@ -63,7 +63,7 @@ jobs:
           sleep 10
         done
 
-    - name: Run Sequelize migrations
+    - name: Run Migrations
       run: |
         cd ./users-api/src
         if npx sequelize-cli db:migrate; then
@@ -76,14 +76,31 @@ jobs:
     - name: Cleanup
       run: docker stop $DB_HOST
 
-    - name: Comment on success of migration
+    - name: Check for existing comment
+      id: check_comment
       run: |
-        PR_COMMENT=":x: Database migration failed"
-        
-        # Post the comment to the PR
-        curl \
-          -X POST \
-          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+        comment_id=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments \
-          -d "{\"body\":\"${{ env.PR_COMMENT }}\"}"
+          | jq '.[] | select(.user.login == "github-actions[bot]" and .body | test("Database migration")) | .id')
+
+        echo "::set-output name=comment_id::$comment_id"
+      continue-on-error: true
+
+    - name: Post or update PR comment based on migration result
+      run: |
+        if [[ -z "${{ steps.check_comment.outputs.comment_id }}" ]]; then
+          # Create a new comment
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments \
+            -d "{\"body\":\"${{ env.PR_COMMENT }}\"}"
+        else
+          # Update the existing comment
+          curl -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/issues/comments/${{ steps.check_comment.outputs.comment_id }} \
+            -d "{\"body\":\"${{ env.PR_COMMENT }}\"}"
+        fi
