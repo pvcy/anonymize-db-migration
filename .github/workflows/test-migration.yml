@@ -18,26 +18,11 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Authenticate with GCP
-      uses: google-github-actions/auth@v1
-      with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-
-    - name: Use gcloud CLI
-      run: gcloud info
-
-    - name: Configure Docker to authenticate with GCR
+    - name: Build PostgreSQL container
       run: |
-        gcloud auth configure-docker
-    
-    - name: Pull PostgreSQL image from GCP
-      run: |
-        docker pull gcr.io/$GCP_PROEJCT_ID/$DB_HOST:latest
+        docker build -t $DB_HOST:latest ./db
 
     - name: Start PostgreSQL container
       run: |
@@ -48,7 +33,7 @@ jobs:
           -e RESTORE_FROM_BACKUP=True \
           -e DB_BACKUP_URL=$DB_BACKUP_URL \
           -p 5432:5432 \
-          gcr.io/$GCP_PROEJCT_ID/$DB_HOST:latest
+          $DB_HOST:latest
 
     - name: Install Sequelize CLI and dependencies
       run: |
