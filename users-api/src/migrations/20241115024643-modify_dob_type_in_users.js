@@ -8,10 +8,14 @@ module.exports = {
       type: Sequelize.DATEONLY,
     });
 
-    // Convert and move the data from 'dob' to 'dob_temp'
+    // Convert valid dates and set NULL for invalid ones
     await queryInterface.sequelize.query(`
       UPDATE "users" 
-      SET "dob_temp" = "dob"::DATE
+      SET "dob_temp" = CASE
+        WHEN "dob" ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' AND "dob"::DATE IS NOT NULL
+        THEN "dob"::DATE
+        ELSE NULL
+      END
     `);
 
     // Remove the old 'dob' column
