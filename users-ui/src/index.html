@@ -45,12 +45,22 @@
       text-align: right;
       padding: 3px;
     }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 
 <body>
   <h2>List of Users</h2>
-  <div class="navbuttons" id="pagination-controls"></div>
+  <div class="header-container">
+    <div>Total Users: <span id="total-users"></span></div>
+    <div class="navbuttons" id="pagination-controls"></div>
+  </div>
   <table id="usersTable">
     <thead>
       <tr>
@@ -77,6 +87,8 @@
     fetch(API_ENDPOINT)
       .then(response => response.json())
       .then(envelope => {
+        document.getElementById('total-users').textContent = formatNumber(envelope.totalUsers);
+        
         const tableBody = document.querySelector('#usersTable tbody');
         envelope.users.forEach(user => {
           const row = document.createElement('tr');
@@ -164,6 +176,10 @@
       nextLink.classList.add('prev-next-button');
 
       controlsDiv.appendChild(nextLink);
+    }
+
+    function formatNumber(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
   </script>
 </body>

@@ -75,18 +75,18 @@ app.use(
 
 app.get("/users", async (req, res) => {
   const page = parseInt(req.query.page, 10) || 1;
-  const pageSize = 25;
+  const pageSize = 100;
   try {
-    const users = await User.findAll({
+    const { count, rows } = await User.findAndCountAll({
       offset: (page - 1) * pageSize,
       limit: pageSize,
     });
 
     res.json({
-      totalUsers: users.length,
+      totalUsers: count,
       page: page,
       pageSize: pageSize,
-      users: users,
+      users: rows,
     });
   } catch (err) {
     console.error(err);
