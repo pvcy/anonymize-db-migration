@@ -1,7 +1,7 @@
 name: Build and Push Container Image
 on:
   push:
-    branches: [ main ]
+    branches: [ some-branch ]
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
