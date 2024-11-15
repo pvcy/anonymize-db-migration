@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GCP_PROEJCT_ID: "database-migration-anonymized"
-      DB_HOST: "users-db"
+      DB_HOST: "localhost"
       POSTGRES_PASSWORD: "dMVZFeBWLOzYRV71"
       DB_USERNAME: "postgres"
       POSTGRES_DB: "postgres"
@@ -22,18 +22,18 @@ jobs:
 
     - name: Build PostgreSQL container
       run: |
-        docker build -t $DB_HOST:latest ./db
+        docker build -t postgres-migration:latest ./db
 
     - name: Start PostgreSQL container
       run: |
-        docker run -d --name $DB_HOST \
+        docker run -d --name postgres-migration \
           -e POSTGRES_USER=$DB_USERNAME \
           -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
           -e POSTGRES_DB=$POSTGRES_DB \
           -e RESTORE_FROM_BACKUP=True \
           -e DB_BACKUP_URL=$DB_BACKUP_URL \
           -p 5432:5432 \
-          $DB_HOST:latest
+          postgres-migration:latest
 
     - name: Install Sequelize CLI and dependencies
       run: |
@@ -61,7 +61,7 @@ jobs:
       continue-on-error: true
 
     - name: Cleanup
-      run: docker stop $DB_HOST
+      run: docker stop postgres-migration
 
     - name: Check for existing comment
       id: check_comment
