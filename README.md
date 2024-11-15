@@ -21,5 +21,4 @@ The app uses a GitHub workflow, `test-migration.yml`, to detect when pull reques
 2. Make sure the environment variable `LOAD_DATA` is set to `True` in the `/docker-compose.yml` file. And make sure the environment variable `RESTORE_FROM_BACKUP` is set to `False`.
 3. Run the PostgreSQL database locally with the command `docker compose up --build`. This will launch the three containers defined in `/docker-compose.yml` and load the sample data (`/users-api/data/users.json`) into the database container.
 4. From the command line, run the migration with `$\users-api\src npx sequelize-cli db:migrate`. The migration should pass locally.
-5. Create a migration file in the `/users-api/src/migrations` directory.
-6. Create a pull request with the migration file. The workflow will run and comment on the pull request with the results of the migration test.
+5. Create a pull request containing the new migration file. The workflow will run and comment on the pull request with the results of the migration test.
