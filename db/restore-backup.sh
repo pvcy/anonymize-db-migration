@@ -19,6 +19,7 @@ if [ "$RESTORE_FROM_BACKUP" == "True" ]; then
   # Restore the dump using pg_restore (or psql depending on the dump format)
   echo "Restore backup"
   pg_restore -U $POSTGRES_USER -d $POSTGRES_DB /tmp/dump.backup
+  echo "Database restore completed"
 fi
 
 # Wait for the PostgreSQL process to complete
