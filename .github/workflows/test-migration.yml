@@ -11,10 +11,12 @@ jobs:
     env:
       GCP_PROEJCT_ID: "database-migration-anonymized"
       DB_HOST: "localhost"
-      POSTGRES_PASSWORD: "dMVZFeBWLOzYRV71"
+      POSTGRES_PASSWORD: '${{ secrets.DB_PASSWORD }}'
       DB_USERNAME: "postgres"
       POSTGRES_DB: "postgres"
       DB_BACKUP_URL: "https://storage.googleapis.com/anonymize-db-backups/us-west1/backup.sql"
+      DB_PASSWORD: '${{ secrets.DB_PASSWORD }}'
+      PGPASSWORD: '${{ secrets.DB_PASSWORD }}'
 
     steps:
     - name: Checkout code
@@ -27,11 +29,11 @@ jobs:
     - name: Start PostgreSQL container
       run: |
         docker run -d --name postgres-migration \
-          -e POSTGRES_USER=$DB_USERNAME \
-          -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-          -e POSTGRES_DB=$POSTGRES_DB \
+          -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+          -e POSTGRES_USER="${DB_USERNAME}" \
+          -e POSTGRES_DB="${POSTGRES_DB}" \
           -e RESTORE_FROM_BACKUP=True \
-          -e DB_BACKUP_URL=$DB_BACKUP_URL \
+          -e DB_BACKUP_URL="${DB_BACKUP_URL}" \
           -p 5432:5432 \
           postgres-migration:latest
 
